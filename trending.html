@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trending — Unfinished</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root { --dark:#2C2F3A; --mid:#4A4F68; --accent:#9C8ADE; --light:#F3F1FA; --muted:#C9CBD6; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--dark); color:var(--light); font-family:'DM Sans',sans-serif; font-weight:300; line-height:1.6; min-height:100vh; }
+    a { color:inherit; text-decoration:none; }
+
+    /* ── NAV ── */
+    nav { position:sticky; top:0; z-index:99; background:rgba(44,47,58,.95); backdrop-filter:blur(12px); border-bottom:1px solid rgba(156,138,222,.1); display:flex; align-items:center; justify-content:space-between; padding:.85rem 1.5rem; gap:1rem; }
+    .logo { font-family:'Playfair Display',serif; font-size:1.2rem; flex-shrink:0; }
+    .logo span { color:var(--accent); }
+    .nav-links { display:flex; gap:1.5rem; list-style:none; }
+    .nav-links a { font-size:.85rem; color:var(--muted); transition:color .2s; }
+    .nav-links a:hover, .nav-links a.active { color:var(--light); }
+    .nav-right { display:flex; gap:.5rem; flex-shrink:0; }
+    .btn { display:inline-flex; align-items:center; padding:.42rem 1rem; border-radius:99px; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; cursor:pointer; border:none; transition:all .2s; text-decoration:none; white-space:nowrap; }
+    .btn-primary { background:var(--accent); color:var(--dark); }
+    .btn-primary:hover { background:#b09fe8; }
+    .btn-ghost { background:transparent; color:var(--light); border:1px solid rgba(201,203,214,.25); }
+    .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+    .hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:.2rem; }
+    .hamburger span { display:block; width:20px; height:2px; background:var(--muted); border-radius:2px; }
+    @media(max-width:640px) {
+      .nav-links { display:none; position:fixed; top:52px; left:0; right:0; background:var(--dark); flex-direction:column; padding:1.25rem 1.5rem; gap:1rem; border-bottom:1px solid rgba(201,203,214,.1); z-index:98; }
+      .nav-links.open { display:flex; }
+      .hamburger { display:flex; }
+      .nav-right .btn-ghost { display:none; }
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header { background:var(--mid); padding:2.5rem 1.5rem 2rem; border-bottom:1px solid rgba(201,203,214,.08); }
+    .page-header .label { font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:.5rem; }
+    .page-header h1 { font-family:'Playfair Display',serif; font-size:clamp(1.6rem,4vw,2.2rem); margin-bottom:.3rem; }
+    .page-header p { font-size:.875rem; color:var(--muted); }
+
+    /* ── PERIOD TABS ── */
+    .period-bar { display:flex; gap:.4rem; padding:1rem 1.5rem; border-bottom:1px solid rgba(201,203,214,.08); }
+    .period-btn { padding:.3rem .9rem; border-radius:99px; font-size:.8rem; border:1px solid rgba(201,203,214,.15); color:var(--muted); background:none; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .15s; }
+    .period-btn:hover { border-color:rgba(156,138,222,.4); color:var(--light); }
+    .period-btn.active { border-color:var(--accent); color:var(--accent); background:rgba(156,138,222,.1); }
+
+    /* ── LAYOUT ── */
+    .layout { max-width:1020px; margin:0 auto; padding:2rem 1.25rem 5rem; display:grid; grid-template-columns:1fr 260px; gap:2rem; align-items:start; }
+    @media(max-width:760px) { .layout { grid-template-columns:1fr; } .sidebar { display:none; } }
+
+    /* ── #1 HERO POST ── */
+    .hero-post { background:var(--mid); border:1px solid rgba(156,138,222,.15); border-radius:12px; padding:1.5rem; margin-bottom:1rem; position:relative; overflow:hidden; }
+    .hero-post::before { content:''; position:absolute; top:-60px; right:-60px; width:220px; height:220px; background:radial-gradient(circle,rgba(156,138,222,.12) 0%,transparent 65%); pointer-events:none; }
+    .rank-badge { display:inline-flex; align-items:center; gap:.35rem; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:.75rem; }
+    .rank-num { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--accent); line-height:1; }
+    .hero-post h2 { font-family:'Playfair Display',serif; font-size:1.35rem; margin-bottom:.5rem; line-height:1.25; }
+    .hero-post h2 a:hover { color:var(--accent); }
+    .hero-post p { font-size:.875rem; color:var(--muted); margin-bottom:1rem; }
+
+    /* ── NUMBERED LIST POSTS ── */
+    .post-list { display:flex; flex-direction:column; gap:.5rem; }
+    .post-item { display:flex; align-items:stretch; background:var(--mid); border:1px solid rgba(156,138,222,.08); border-radius:10px; overflow:hidden; transition:border-color .2s; }
+    .post-item:hover { border-color:rgba(156,138,222,.3); }
+    .rank-col { display:flex; align-items:center; justify-content:center; min-width:48px; background:rgba(44,47,58,.3); font-family:'Playfair Display',serif; font-size:1.1rem; color:rgba(201,203,214,.3); }
+    .item-body { flex:1; padding:.85rem 1rem; min-width:0; }
+    .item-top { display:flex; align-items:center; gap:.4rem; font-size:.72rem; color:var(--muted); margin-bottom:.3rem; flex-wrap:wrap; }
+    .cat-pill { background:rgba(156,138,222,.12); color:var(--accent); padding:.12rem .5rem; border-radius:99px; font-size:.67rem; letter-spacing:.06em; text-transform:uppercase; }
+    .item-title { font-size:.92rem; color:var(--light); display:block; margin-bottom:.3rem; line-height:1.3; }
+    .item-title:hover { color:var(--accent); }
+    .item-excerpt { font-size:.8rem; color:var(--muted); display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:.5rem; }
+    .item-meta { display:flex; align-items:center; gap:.75rem; font-size:.75rem; color:var(--muted); flex-wrap:wrap; }
+    .prog-mini { display:flex; align-items:center; gap:.4rem; }
+    .prog-bar { width:70px; height:3px; background:rgba(201,203,214,.1); border-radius:99px; overflow:hidden; }
+    .prog-fill { height:100%; background:linear-gradient(90deg,var(--mid),var(--accent)); border-radius:99px; }
+    .relate-num { color:var(--accent); }
+    .item-tags { display:flex; gap:.3rem; flex-wrap:wrap; margin-bottom:.5rem; }
+    .tag { font-size:.67rem; padding:.15rem .5rem; border-radius:99px; border:1px solid rgba(201,203,214,.15); color:rgba(201,203,214,.5); }
+    .item-actions { display:flex; gap:.1rem; }
+    .act-btn { display:flex; align-items:center; gap:.25rem; background:none; border:none; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:.74rem; cursor:pointer; padding:.25rem .55rem; border-radius:6px; transition:all .15s; }
+    .act-btn:hover { background:rgba(156,138,222,.08); color:var(--light); }
+
+    /* ── SIDEBAR ── */
+    .sidebar { position:sticky; top:70px; display:flex; flex-direction:column; gap:1rem; }
+    .side-box { background:var(--mid); border:1px solid rgba(156,138,222,.08); border-radius:12px; padding:1.1rem; }
+    .side-box h4 { font-family:'Playfair Display',serif; font-size:.95rem; margin-bottom:.85rem; }
+
+    /* Trending tags */
+    .trend-tags { display:flex; flex-wrap:wrap; gap:.4rem; }
+    .trend-tag { padding:.3rem .8rem; border-radius:99px; font-size:.78rem; border:1px solid rgba(201,203,214,.15); color:var(--muted); cursor:pointer; transition:all .15s; }
+    .trend-tag:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* Trending categories */
+    .trend-cat { display:flex; align-items:center; justify-content:space-between; padding:.45rem 0; border-bottom:1px solid rgba(201,203,214,.07); font-size:.83rem; }
+    .trend-cat:last-child { border-bottom:none; }
+    .trend-cat-name { color:var(--muted); }
+    .trend-cat-bar { display:flex; align-items:center; gap:.5rem; }
+    .trend-cat-mini { width:50px; height:3px; background:rgba(201,203,214,.1); border-radius:99px; overflow:hidden; }
+    .trend-cat-fill { height:100%; background:var(--accent); border-radius:99px; }
+    .trend-cat-pct { font-size:.7rem; color:rgba(201,203,214,.5); }
+
+    /* FOOTER */
+    footer { border-top:1px solid rgba(201,203,214,.08); padding:1.4rem 1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.75rem; font-size:.76rem; color:rgba(201,203,214,.45); }
+    footer a { color:rgba(201,203,214,.45); margin-left:1rem; }
+    footer a:hover { color:var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="index.html" class="logo">Un<span>finished</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="feed.html">Feed</a></li>
+    <li><a href="categories.html">Browse</a></li>
+    <li><a href="trending.html" class="active">Trending</a></li>
+    <li><a href="search.html">Search</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="create-post.html" class="btn btn-ghost">+ Share</a>
+    <a href="login.html" class="btn btn-primary">Sign in</a>
+    <button class="hamburger" id="ham" onclick="document.getElementById('navLinks').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="label">🔥 Trending</div>
+  <h1>What everyone's relating to.</h1>
+  <p>The most related-to posts across the community right now.</p>
+</div>
+
+<!-- PERIOD TABS -->
+<div class="period-bar">
+  <button class="period-btn active" onclick="setPeriod(this,'today')">Today</button>
+  <button class="period-btn" onclick="setPeriod(this,'week')">This week</button>
+  <button class="period-btn" onclick="setPeriod(this,'month')">This month</button>
+  <button class="period-btn" onclick="setPeriod(this,'all')">All time</button>
+</div>
+
+<div class="layout">
+
+  <!-- MAIN -->
+  <main>
+    <!-- #1 Hero -->
+    <div class="hero-post" id="heroPost"></div>
+    <!-- #2–#8 list -->
+    <div class="post-list" id="postList"></div>
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="side-box">
+      <h4>Trending reasons</h4>
+      <div class="trend-tags">
+        <span class="trend-tag">Lost motivation</span>
+        <span class="trend-tag">Life happened</span>
+        <span class="trend-tag">Too dense</span>
+        <span class="trend-tag">No time</span>
+        <span class="trend-tag">Perfectionism</span>
+        <span class="trend-tag">Scope creep</span>
+        <span class="trend-tag">Too slow</span>
+        <span class="trend-tag">Streak broken</span>
+      </div>
+    </div>
+
+    <div class="side-box">
+      <h4>Trending categories</h4>
+      <div class="trend-cat"><span class="trend-cat-name">📖 Books</span><div class="trend-cat-bar"><div class="trend-cat-mini"><div class="trend-cat-fill" style="width:88%"></div></div><span class="trend-cat-pct">88%</span></div></div>
+      <div class="trend-cat"><span class="trend-cat-name">🏃 Habits</span><div class="trend-cat-bar"><div class="trend-cat-mini"><div class="trend-cat-fill" style="width:74%"></div></div><span class="trend-cat-pct">74%</span></div></div>
+      <div class="trend-cat"><span class="trend-cat-name">💻 Courses</span><div class="trend-cat-bar"><div class="trend-cat-mini"><div class="trend-cat-fill" style="width:61%"></div></div><span class="trend-cat-pct">61%</span></div></div>
+      <div class="trend-cat"><span class="trend-cat-name">🎬 TV</span><div class="trend-cat-bar"><div class="trend-cat-mini"><div class="trend-cat-fill" style="width:49%"></div></div><span class="trend-cat-pct">49%</span></div></div>
+      <div class="trend-cat"><span class="trend-cat-name">🛠️ Projects</span><div class="trend-cat-bar"><div class="trend-cat-mini"><div class="trend-cat-fill" style="width:38%"></div></div><span class="trend-cat-pct">38%</span></div></div>
+    </div>
+
+  </aside>
+
+</div>
+
+<footer>
+  <span>© 2025 Unfinished</span>
+  <div><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+</footer>
+
+<script>
+const ALL = [
+  { id:6,  title:"Atomic Habits — James Clear",         cat:"Books",    excerpt:"Ironic. Made it to chapter 8 and stopped. The habit didn't stick.",           progress:50, tags:["Irony","Lost motivation"],          author:"Nour L.",   relates:2091, comments:88 },
+  { id:3,  title:"Daily meditation — 30-day challenge", cat:"Habits",   excerpt:"Day 11 was a Monday. That was that.",                                           progress:37, tags:["Lost motivation","Streak broken"],   author:"Sana K.",   relates:1204, comments:56 },
+  { id:7,  title:"Dark Souls III",                      cat:"Games",    excerpt:"Couldn't pass the second boss. 8 hours I'm at peace with losing.",             progress:12, tags:["Too difficult","Rage quit"],         author:"Khalid B.", relates:644,  comments:31 },
+  { id:2,  title:"Python Bootcamp — Udemy",             cat:"Courses",  excerpt:"Stopped at section 12. Work got busy.",                                         progress:38, tags:["Life happened","No time"],           author:"Marcus T.", relates:821,  comments:34 },
+  { id:5,  title:"Personal finance tracker app",        cat:"Projects", excerpt:"Got to the charts component then redesigned it all. Still in Figma.",          progress:25, tags:["Scope creep","Perfectionism"],       author:"Dev A.",    relates:432,  comments:21 },
+  { id:1,  title:"Infinite Jest — David Foster Wallace",cat:"Books",    excerpt:"500 pages in. The footnotes became a second novel.",                            progress:62, tags:["Too dense","Lost focus"],            author:"Layla M.",  relates:347,  comments:12 },
+  { id:8,  title:"30-day running challenge",            cat:"Habits",   excerpt:"Day 14. It rained. Never went back.",                                           progress:47, tags:["Life happened"],                     author:"Yasmin S.", relates:320,  comments:14 },
+  { id:4,  title:"Severance — Season 2",                cat:"TV",       excerpt:"I loved S1. Started S2 twice. The pacing just didn't grip me.",                 progress:45, tags:["Too slow"],                          author:"Omar R.",   relates:58,   comments:7  },
+];
+
+function fmt(n) { return n >= 1000 ? (n/1000).toFixed(1)+'k' : n; }
+
+function renderHero(p) {
+  document.getElementById('heroPost').innerHTML = `
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.75rem;">
+      <span class="rank-num">01</span>
+      <span class="cat-pill">${p.cat}</span>
+    </div>
+    <h2><a href="post.html?id=${p.id}">${p.title}</a></h2>
+    <p>${p.excerpt}</p>
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.75rem;">
+      <div class="prog-bar" style="width:120px;height:5px;"><div class="prog-fill" style="width:${p.progress}%"></div></div>
+      <span style="font-size:.8rem;color:var(--muted);">${p.progress}% through</span>
+    </div>
+    <div class="item-tags" style="margin-bottom:1rem;">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <div style="display:flex;align-items:center;gap:.6rem;font-size:.8rem;color:var(--muted);">
+        <span>u/${p.author.replace(' ','_').toLowerCase()}</span>
+        <span>·</span>
+        <span class="relate-num">♡ ${fmt(p.relates)} relates</span>
+        <span>·</span>
+        <span>💬 ${p.comments} comments</span>
+      </div>
+      <a href="post.html?id=${p.id}" class="btn btn-primary" style="font-size:.8rem;padding:.38rem .9rem;">Read post →</a>
+    </div>
+  `;
+}
+
+function renderList(posts) {
+  document.getElementById('postList').innerHTML = posts.map((p, i) => `
+    <div class="post-item">
+      <div class="rank-col">${String(i + 2).padStart(2,'0')}</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="cat-pill">${p.cat}</span>
+          <span>u/${p.author.replace(' ','_').toLowerCase()}</span>
+        </div>
+        <a class="item-title" href="post.html?id=${p.id}">${p.title}</a>
+        <div class="item-excerpt">${p.excerpt}</div>
+        <div class="item-tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <div class="item-meta">
+          <div class="prog-mini">
+            <div class="prog-bar"><div class="prog-fill" style="width:${p.progress}%"></div></div>
+            <span>${p.progress}%</span>
+          </div>
+          <span class="relate-num">♡ ${fmt(p.relates)}</span>
+          <span>💬 ${p.comments}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function render(data) {
+  const sorted = [...data].sort((a,b) => b.relates - a.relates);
+  renderHero(sorted[0]);
+  renderList(sorted.slice(1));
+}
+
+function setPeriod(btn, period) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Shuffle relates slightly per period for demo
+  const factor = { today:1, week:.85, month:.7, all:1.2 }[period];
+  const adjusted = ALL.map(p => ({ ...p, relates: Math.round(p.relates * factor) }));
+  render(adjusted);
+}
+
+render(ALL);
+</script>
+</body>
+</html>

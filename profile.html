@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile — Unfinished</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root { --dark:#2C2F3A; --mid:#4A4F68; --accent:#9C8ADE; --light:#F3F1FA; --muted:#C9CBD6; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--dark); color:var(--light); font-family:'DM Sans',sans-serif; font-weight:300; line-height:1.6; min-height:100vh; }
+    a { color:inherit; text-decoration:none; }
+
+    /* ── NAV ── */
+    nav {
+      position:sticky; top:0; z-index:99;
+      background:rgba(44,47,58,.92); backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(156,138,222,.1);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:.9rem 1.5rem; gap:1rem;
+    }
+    .logo { font-family:'Playfair Display',serif; font-size:1.2rem; flex-shrink:0; }
+    .logo span { color:var(--accent); }
+    .nav-links { display:flex; gap:1.5rem; list-style:none; }
+    .nav-links a { font-size:.85rem; color:var(--muted); transition:color .2s; }
+    .nav-links a:hover, .nav-links a.active { color:var(--light); }
+    .nav-right { display:flex; gap:.5rem; flex-shrink:0; }
+    .btn { display:inline-flex; align-items:center; padding:.42rem 1rem; border-radius:99px; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; cursor:pointer; border:none; transition:all .2s; text-decoration:none; }
+    .btn-primary { background:var(--accent); color:var(--dark); }
+    .btn-primary:hover { background:#b09fe8; }
+    .btn-ghost { background:transparent; color:var(--light); border:1px solid rgba(201,203,214,.25); }
+    .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* ── PROFILE BANNER ── */
+    .banner { height:120px; background:linear-gradient(135deg,var(--mid) 0%,rgba(156,138,222,.3) 100%); position:relative; }
+
+    /* ── PROFILE HEADER ── */
+    .profile-header { max-width:760px; margin:0 auto; padding:0 1.5rem; }
+    .avatar-row { display:flex; align-items:flex-end; justify-content:space-between; margin-top:-36px; margin-bottom:1rem; flex-wrap:wrap; gap:.75rem; }
+    .avatar {
+      width:72px; height:72px; border-radius:50%;
+      background:var(--mid); border:3px solid var(--dark);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--accent);
+    }
+    .profile-actions { display:flex; gap:.5rem; margin-bottom:.25rem; }
+
+    .profile-name { font-family:'Playfair Display',serif; font-size:1.4rem; margin-bottom:.2rem; }
+    .profile-handle { font-size:.82rem; color:var(--muted); margin-bottom:.5rem; }
+    .profile-bio { font-size:.88rem; color:var(--muted); max-width:480px; margin-bottom:.75rem; }
+    .profile-meta { display:flex; gap:1.25rem; font-size:.78rem; color:var(--muted); flex-wrap:wrap; }
+    .profile-meta span { display:flex; align-items:center; gap:.3rem; }
+
+    /* Stats strip */
+    .stats-strip {
+      max-width:760px; margin:1.25rem auto 0; padding:0 1.5rem;
+      display:flex; gap:0; border-top:1px solid rgba(201,203,214,.1);
+      border-bottom:1px solid rgba(201,203,214,.1);
+    }
+    .stat { flex:1; text-align:center; padding:1rem .5rem; border-right:1px solid rgba(201,203,214,.08); }
+    .stat:last-child { border-right:none; }
+    .stat-n { font-family:'Playfair Display',serif; font-size:1.5rem; display:block; }
+    .stat-l { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; }
+
+    /* ── TABS ── */
+    .tabs-bar { max-width:760px; margin:0 auto; padding:0 1.5rem; display:flex; border-bottom:1px solid rgba(201,203,214,.1); }
+    .tab { padding:.85rem 1.25rem; background:none; border:none; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:.875rem; cursor:pointer; transition:color .2s; border-bottom:2px solid transparent; margin-bottom:-1px; }
+    .tab:hover { color:var(--light); }
+    .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+    /* ── CONTENT ── */
+    .content { max-width:760px; margin:0 auto; padding:1.75rem 1.5rem 5rem; }
+
+    /* Post row */
+    .post-row { display:flex; gap:0; background:var(--mid); border:1px solid rgba(156,138,222,.08); border-radius:10px; margin-bottom:.6rem; overflow:hidden; transition:border-color .2s; }
+    .post-row:hover { border-color:rgba(156,138,222,.3); }
+    .vote-col { display:flex; flex-direction:column; align-items:center; gap:.3rem; padding:.85rem .6rem; background:rgba(44,47,58,.3); min-width:46px; }
+    .vote-btn { background:none; border:none; color:var(--muted); cursor:pointer; font-size:1rem; padding:0; transition:color .2s; }
+    .vote-btn:hover { color:var(--accent); }
+    .vote-count { font-size:.78rem; font-weight:500; color:var(--light); }
+    .post-content { flex:1; padding:.85rem 1rem; min-width:0; }
+    .post-top { display:flex; align-items:center; gap:.5rem; font-size:.72rem; color:var(--muted); margin-bottom:.35rem; flex-wrap:wrap; }
+    .cat-pill { background:rgba(156,138,222,.12); color:var(--accent); padding:.15rem .55rem; border-radius:99px; font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; }
+    .post-title-link { font-size:.95rem; color:var(--light); display:block; margin-bottom:.3rem; line-height:1.35; }
+    .post-title-link:hover { color:var(--accent); }
+    .post-excerpt { font-size:.82rem; color:var(--muted); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:.5rem; }
+    .mini-prog-row { display:flex; align-items:center; gap:.6rem; margin-bottom:.5rem; }
+    .mini-prog { max-width:120px; height:3px; background:rgba(201,203,214,.12); border-radius:99px; overflow:hidden; flex:1; }
+    .mini-prog-fill { height:100%; background:linear-gradient(90deg,var(--mid),var(--accent)); border-radius:99px; }
+    .mini-label { font-size:.72rem; color:var(--muted); }
+    .post-tags { display:flex; gap:.3rem; flex-wrap:wrap; margin-bottom:.5rem; }
+    .tag { font-size:.68rem; padding:.18rem .55rem; border-radius:99px; border:1px solid rgba(201,203,214,.18); color:rgba(201,203,214,.6); }
+    .post-actions { display:flex; gap:.2rem; }
+    .action-btn { display:flex; align-items:center; gap:.3rem; background:none; border:none; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:.75rem; cursor:pointer; padding:.3rem .6rem; border-radius:6px; transition:all .15s; }
+    .action-btn:hover { background:rgba(156,138,222,.08); color:var(--light); }
+
+    /* Edit form */
+    .edit-form { background:var(--mid); border:1px solid rgba(156,138,222,.1); border-radius:12px; padding:1.5rem; max-width:480px; }
+    .edit-form h3 { font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:1.25rem; }
+    .field { display:flex; flex-direction:column; gap:.4rem; margin-bottom:1.1rem; }
+    .field label { font-size:.8rem; color:var(--muted); }
+    .field input, .field textarea { background:rgba(44,47,58,.6); border:1px solid rgba(201,203,214,.15); border-radius:8px; padding:.65rem .9rem; color:var(--light); font-family:'DM Sans',sans-serif; font-size:.88rem; outline:none; transition:border-color .2s; }
+    .field input:focus, .field textarea:focus { border-color:var(--accent); }
+    .field textarea { resize:vertical; min-height:80px; }
+    .save-msg { font-size:.8rem; color:#7edea0; margin-left:.75rem; opacity:0; transition:opacity .3s; }
+    .save-msg.show { opacity:1; }
+
+    /* Saved empty */
+    .empty { text-align:center; padding:3rem 0; color:var(--muted); }
+    .empty a { color:var(--accent); }
+
+    /* FOOTER */
+    footer { border-top:1px solid rgba(201,203,214,.1); padding:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.75rem; font-size:.78rem; color:var(--muted); }
+    footer a { color:var(--muted); margin-left:1.25rem; }
+    footer a:hover { color:var(--accent); }
+
+    @media(max-width:640px) { .nav-links { display:none; } .stats-strip { flex-wrap:wrap; } .stat { min-width:50%; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">Un<span>finished</span></a>
+  <ul class="nav-links">
+    <li><a href="categories.html">Browse</a></li>
+    <li><a href="trending.html">Trending</a></li>
+    <li><a href="saved.html">Saved</a></li>
+    <li><a href="create-post.html">+ Share</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="login.html" class="btn btn-ghost">Sign out</a>
+  </div>
+</nav>
+
+<!-- BANNER -->
+<div class="banner"></div>
+
+<!-- PROFILE HEADER -->
+<div class="profile-header">
+  <div class="avatar-row">
+    <div class="avatar" id="avatarEl">LM</div>
+    <div class="profile-actions">
+      <button class="btn btn-ghost" onclick="setTab('edit')">Edit profile</button>
+      <a href="create-post.html" class="btn btn-primary">+ Share</a>
+    </div>
+  </div>
+  <div class="profile-name" id="nameEl">Layla M.</div>
+  <div class="profile-handle">u/layla_m · joined March 2025</div>
+  <div class="profile-bio" id="bioEl">Freelance designer. I start a lot of books and finish very few of them. Trying to be honest about that.</div>
+  <div class="profile-meta">
+    <span>📖 8 posts</span>
+    <span>♡ 1,420 relates received</span>
+    <span>📊 41% avg progress</span>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat"><span class="stat-n">8</span><span class="stat-l">Posts</span></div>
+  <div class="stat"><span class="stat-n">1.4k</span><span class="stat-l">Relates</span></div>
+  <div class="stat"><span class="stat-n">41%</span><span class="stat-l">Avg progress</span></div>
+  <div class="stat"><span class="stat-n">3</span><span class="stat-l">Saved</span></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab active" onclick="setTab('posts')">Posts</button>
+  <button class="tab" onclick="setTab('saved')">Saved</button>
+  <button class="tab" onclick="setTab('edit')">Edit profile</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- POSTS TAB -->
+  <div id="tab-posts">
+    <div id="userPostsFeed"></div>
+  </div>
+
+  <!-- SAVED TAB -->
+  <div id="tab-saved" style="display:none;">
+    <div id="savedFeed"></div>
+  </div>
+
+  <!-- EDIT TAB -->
+  <div id="tab-edit" style="display:none;">
+    <div class="edit-form">
+      <h3>Edit profile</h3>
+      <div class="field">
+        <label>Display name</label>
+        <input type="text" id="editName" value="Layla M." />
+      </div>
+      <div class="field">
+        <label>Bio</label>
+        <textarea id="editBio">Freelance designer. I start a lot of books and finish very few of them. Trying to be honest about that.</textarea>
+      </div>
+      <div style="display:flex;align-items:center;">
+        <button class="btn btn-primary" onclick="saveProfile()">Save changes</button>
+        <span class="save-msg" id="saveMsg">✓ Saved!</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span>© 2025 <strong>Un<span style="color:var(--accent)">finished</span></strong></span>
+  <div><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+</footer>
+
+<script>
+  const USER_POSTS = [
+    { id:1, title:"Infinite Jest — David Foster Wallace", cat:"Books",    excerpt:"500 pages in. The footnotes became a second novel.",      progress:62, tags:["Too dense","Lost focus"],        relates:347,  comments:12 },
+    { id:6, title:"Atomic Habits — James Clear",         cat:"Books",    excerpt:"Made it to chapter 8. The habit didn't stick. Ironic.",   progress:50, tags:["Lost motivation"],               relates:2091, comments:88 },
+    { id:3, title:"Daily meditation — 30-day challenge", cat:"Habits",   excerpt:"Day 11 was a Monday. That was that.",                     progress:37, tags:["Streak broken"],                  relates:320,  comments:14 },
+  ];
+  const SAVED_POSTS = [
+    { id:2, title:"Python Bootcamp — Udemy",  cat:"Courses", excerpt:"Stopped at section 12.", progress:38, tags:["No time"],      relates:821, comments:34 },
+    { id:4, title:"Severance — Season 2",     cat:"TV",      excerpt:"Didn't grip me.",        progress:45, tags:["Too slow"],     relates:58,  comments:7  },
+  ];
+
+  function postRow(p) {
+    return `
+      <div class="post-row">
+        <div class="vote-col">
+          <button class="vote-btn" onclick="this.style.color='var(--accent)'">▲</button>
+          <span class="vote-count">${p.relates >= 1000 ? (p.relates/1000).toFixed(1)+'k' : p.relates}</span>
+          <button class="vote-btn">▽</button>
+        </div>
+        <div class="post-content">
+          <div class="post-top"><span class="cat-pill">${p.cat}</span></div>
+          <a class="post-title-link" href="post.html?id=${p.id}">${p.title}</a>
+          <div class="post-excerpt">${p.excerpt}</div>
+          <div class="mini-prog-row">
+            <div class="mini-prog"><div class="mini-prog-fill" style="width:${p.progress}%"></div></div>
+            <span class="mini-label">${p.progress}% through</span>
+          </div>
+          <div class="post-tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+          <div class="post-actions">
+            <button class="action-btn" onclick="location.href='post.html?id=${p.id}'">💬 ${p.comments} comments</button>
+            <button class="action-btn">🔗 Share</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderPosts() {
+    document.getElementById('userPostsFeed').innerHTML = USER_POSTS.map(postRow).join('');
+  }
+
+  function renderSaved() {
+    const el = document.getElementById('savedFeed');
+    if (!SAVED_POSTS.length) {
+      el.innerHTML = '<div class="empty"><p>No saved posts yet. <a href="categories.html">Browse the feed →</a></p></div>';
+      return;
+    }
+    el.innerHTML = SAVED_POSTS.map(postRow).join('');
+  }
+
+  function setTab(name) {
+    ['posts','saved','edit'].forEach(t => {
+      document.getElementById('tab-' + t).style.display = t === name ? '' : 'none';
+    });
+    document.querySelectorAll('.tab').forEach((btn, i) => {
+      btn.classList.toggle('active', ['posts','saved','edit'][i] === name);
+    });
+  }
+
+  function saveProfile() {
+    const name = document.getElementById('editName').value.trim();
+    const bio  = document.getElementById('editBio').value.trim();
+    if (name) { document.getElementById('nameEl').textContent = name; document.getElementById('avatarEl').textContent = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+    if (bio)  document.getElementById('bioEl').textContent = bio;
+    const msg = document.getElementById('saveMsg');
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 2000);
+  }
+
+  renderPosts();
+  renderSaved();
+</script>
+</body>
+</html>
